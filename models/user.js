@@ -17,7 +17,8 @@ const User = new Schema({
     },
     password: {
         type: String,
-        trim: true,
+        required : [true, 'L\'email est requis'],
+        minlength: [10, 'Le mot de passe doit contenir au moins 10 caractères']
     }
 }, {
     timestamps: true,
