@@ -2,20 +2,23 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 constbcrypt = require('bcrypt');
 
-const User = new Schema({
-    username:{
+const Catway = new Schema({
+    catwayNumber:{
         type : String,
         trim : true,
-        required : [true, 'Le nom d\'utilisateur est requis']
+        required : [true, 'Le numéro est requis'],
+        unique : true
     },
-    email: {
+    catwayType: {
         type : String,
         trim : true,
-        required : [true, 'L\'email est requis'],
-        unique : true,
-        lowercase : true
+        required : [true, 'Le type est requis'],
+        enum: {
+            values: ['long', 'short'],
+            message: 'Le type doit être "long" ou "short"'
+        }
     },
-    password: {
+    catwayState: {
         type: String,
         trim: true,
     }
@@ -23,14 +26,4 @@ const User = new Schema({
     timestamps: true,
 });
 
-User.pre('save', function(next){
-    if (!this.isModified('password')){
-        return next();
-    }
-
-    this.password = bcrypt.hashSync(this.password, 10);
-
-    next();
-});
-
-module.exports = mongoose.model('User', User);
+module.exports = mongoose.model('Catway', Catway);
