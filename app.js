@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const port = 8080;
 
-/* Démarrage du serveur*/
+/** Démarrage du serveur*/
 app.listen(port, () => {
   console.log('Server app listening on port' + port);
 })
