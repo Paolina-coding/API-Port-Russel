@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 /* Récupérer la liste des utilisateurs */
 exports.getList = async (req, res, next) => {
@@ -80,6 +82,43 @@ exports.delete = async (req, res) => {
         await User.deleteOne({email: email});
         return res.status(200).json('delete_ok');
     } catch (error) {
+        return res.status(500).json(error);
+    }
+}
+
+/*authentification utilisateur*/
+exports.authenticate = async (req, res) => {
+    const {email, password} = req.body;
+
+    try{
+        let user = await User.findOne({email: email}, '-__v -createdAt -updatedAt');
+
+        if (user) {
+            bcrypt.compare(password, user.password, function(err, response){
+                if (err) {
+                    throw new Error(err);
+                }
+                if (response) {
+                    delete user._doc.password;
+
+                    const expireIn = 24 * 60 * 60;
+                    const token = jwt.sign({
+                        user: user
+                    },
+                    process.env.SECRET_KEY,
+                    {
+                        expiresIn: expireIn
+                    });
+                    
+                    res.header('Authorization', 'Bearer ' + token);
+                    return res.status(200).json('authenticate_suceed');
+                }
+                return res.status(403).json('wrong_credentials');
+            });
+        } else {
+            return res.status(404).json('user_not_found');
+        }
+    } catch (error){
         return res.status(500).json(error);
     }
 }
