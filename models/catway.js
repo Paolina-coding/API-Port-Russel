@@ -3,8 +3,7 @@ const Schema = mongoose.Schema;
 
 const Catway = new Schema({
     catwayNumber:{
-        type : String,
-        trim : true,
+        type : Number,
         required : [true, 'Le numéro est requis'],
         unique : true
     },

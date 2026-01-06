@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-constbcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 const User = new Schema({
     username:{
@@ -17,21 +17,20 @@ const User = new Schema({
     },
     password: {
         type: String,
-        required : [true, 'L\'email est requis'],
+        required : [true, 'Le mot de passe est requis'],
         minlength: [10, 'Le mot de passe doit contenir au moins 10 caractères']
     }
 }, {
     timestamps: true,
 });
 
-User.pre('save', function(next){
+User.pre('save', function(){
     if (!this.isModified('password')){
-        return next();
+        return;
     }
 
     this.password = bcrypt.hashSync(this.password, 10);
 
-    next();
 });
 
-module.exports = mongoose.model('User',User)
+module.exports = mongoose.model('User', User)
