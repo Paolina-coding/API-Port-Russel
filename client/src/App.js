@@ -1,28 +1,33 @@
 import { Routes, Route } from "react-router-dom";
-import Accueil from "../client/src/components/pages/accueil.jsx";
-import TableauDeBord from "./client/src/components/pages/tableau_de_bord.js";
-import Catways from "../client/src/components/pages/catways.jsx";
-import Reservations from "../client/src/components/pages/reservations.jsx";
-import Utilisateurs from "../client/src/components/pages/utilisateurs.jsx";
-import Header from "../client/src/components/header.jsx";
-import Footer from "../client/src/components/footer.jsx";
+import Accueil from "./components/pages/accueil.jsx";
+import TableauDeBord from "./components/pages/tableau_de_bord";
+import Catways from "./components/pages/catways";
+import Reservations from "./components/pages/reservations";
+import GetCatway from "./components/getCatway.jsx";
+// import Utilisateurs from "./components/pages/utilisateurs";
 
 import './App.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+
 
 function App() {
   return (
     <div className="App">
       <meta name="description" content="API de gestion du Port Russel" />
-      <Header />
       <Routes>
       <Route path="/" element={<Accueil />} />
         <Route path="/tableau_de_bord" element={<TableauDeBord />} />
         <Route path="/catways" element={<Catways />} />
         <Route path="/reservations" element={<Reservations />} />
-        <Route path="/utilisateurs" element={<Utilisateurs />} />
+        <Route path="/catways/:id" element={<GetCatway />} />
+        
+        {/*<Route path="/:catwayNumber/reservations/add" element={<AddReservation />} />
+        <Route path="/catways/:catwayNumber//List" element={<ReservationList />} />
+        <Route path="/catways/:catwayNumber/reservations/:idReservation/get" element={<GetReservation />} />
+        <Route path="/catways/:catwayNumber/reservations/:idReservation/update" element={<UpdateCatway />} />
+        <Route path="/:catwayNumber/reservations/:idReservation/delete" element={<DeleteCatway />} />
+        
+        <Route path="/utilisateurs" element={<Utilisateurs />} /> */}
       </Routes>
-      <Footer />
     </div>
   );
 }
