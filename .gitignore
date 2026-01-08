@@ -5,9 +5,7 @@ yarn-debug.log
 yarn-error.log
 
 # Environnements
-.env
-.env.*
-env/
+server/env/
 
 # Logs
 logs
