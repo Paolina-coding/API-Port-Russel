@@ -2,6 +2,24 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import CatwayList from '../catwayList';
 
+/**
+ * Page de gestion complète des catways.
+ *
+ * Ce composant permet d’afficher, ajouter, modifier, supprimer et consulter les détails des catways.  
+ * - Afficher la liste des catways via une modale Bootstrap contenant le composant `CatwayList`.
+ * - Rechercher un catway par son numéro et accéder à sa page de détails.
+ * - Ajouter un catway en renseignant son numéro, son type et son état.
+ * - Modifier un catway en changeant son état.
+ * - Supprimer un catway en indiquant son numéro.
+ *
+ * Sécurité :
+ * - Le token JWT est récupéré depuis le `localStorage` et envoyé dans l’en-tête `Authorization` pour toutes les requêtes API.
+ * - Après chaque ajout, modification ou suppression, `refresh` est inversé pour mettre à jour la liste des catways.
+ * - Les messages serveur ou API sont affichées via `alert()` et loggées dans la console.
+ *
+ * @component
+ * @returns {JSX.Element} Une interface complète de gestion des catways avec formulaires et modale d’affichage
+ */
 const Catways = () => {
     const [newNumber, setNewNumber] = useState("");
     const [newType, setNewType] = useState("");

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/components/pages/catways.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/components/pages/catways.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Link } from "react-router-dom";
+import { useState } from "react";
+import CatwayList from '../catwayList';
+
+/**
+ * Page de gestion complète des catways.
+ *
+ * Ce composant permet d’afficher, ajouter, modifier, supprimer et consulter les détails des catways.  
+ * - Afficher la liste des catways via une modale Bootstrap contenant le composant `CatwayList`.
+ * - Rechercher un catway par son numéro et accéder à sa page de détails.
+ * - Ajouter un catway en renseignant son numéro, son type et son état.
+ * - Modifier un catway en changeant son état.
+ * - Supprimer un catway en indiquant son numéro.
+ *
+ * Sécurité :
+ * - Le token JWT est récupéré depuis le `localStorage` et envoyé dans l’en-tête `Authorization` pour toutes les requêtes API.
+ * - Après chaque ajout, modification ou suppression, `refresh` est inversé pour mettre à jour la liste des catways.
+ * - Les messages serveur ou API sont affichées via `alert()` et loggées dans la console.
+ *
+ * @component
+ * @returns {JSX.Element} Une interface complète de gestion des catways avec formulaires et modale d’affichage
+ */
+const Catways = () => {
+    const [newNumber, setNewNumber] = useState("");
+    const [newType, setNewType] = useState("");
+    const [newState, setNewState] = useState("");
+    const [catwayNumber, setCatwayNumber] = useState("");
+    const [deleteNumber, setDeleteNumber] = useState("");
+    const [refresh, setRefresh] = useState(false);
+    const [updateNumber, setUpdateNumber] = useState(""); 
+    const [updateState, setUpdateState] = useState("");
+    const token = localStorage.getItem("token");
+
+//ajout d'un nouveau catway
+    const addCatway = async (e) => {
+        e.preventDefault(); // empêche le rechargement de la page
+        if (!newNumber || !newType || !newState) {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        const newCatway = {
+            catwayNumber: newNumber,
+            catwayType: newType,
+            catwayState: newState
+        };
+
+        try {
+            const response = await fetch("/catways/add", {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json" ,
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify(newCatway)
+            });
+
+            if (response.ok) {
+                alert("Catway ajouté !");
+                setNewNumber("");
+                setNewType("");
+                setNewState("");
+                setRefresh(prev => !prev); //refresh de la liste des catways
+
+            } else {
+                alert("Erreur lors de l'ajout");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erreur serveur");
+        }
+    };
+
+//modification d'un catway
+const updateCatway = async (e) => {
+    e.preventDefault();
+
+    if (!updateNumber || !updateState) {
+        alert("Veuillez remplir tous les champs");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/catways/${updateNumber}`, {
+            method: "PUT",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({ catwayState: updateState })
+        });
+
+        if (response.ok) {
+            alert("Catway modifié !");
+            setUpdateNumber("");
+            setUpdateState("");
+            setRefresh(prev => !prev); // refresh de la liste
+        } else {
+            alert("Erreur lors de la modification");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erreur serveur");
+    }
+};
+
+
+//suppression d'un catway
+    const deleteCatway = async (e) => {
+        e.preventDefault(); // empêche le rechargement de la page
+        if (!deleteNumber) {
+            alert("Veuillez entrer le numéro du catway à supprimer");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/catways/${deleteNumber}`, {
+                method: "DELETE",
+                headers:{"Authorization": "Bearer " + token}
+            });
+
+            if (response.ok) {
+                alert("Catway supprimé !");
+                setDeleteNumber("");
+                setRefresh(prev => !prev); //refresh de la liste des catways
+
+            } else {
+                alert("Erreur lors de la suppression");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erreur serveur");
+        }
+    };
+
+//affichage du site
+  return (
+    &lt;main className="container">
+      &lt;div className="text-center">
+        &lt;h1>Catways&lt;/h1>
+      &lt;/div>
+      &lt;hr />
+        &lt;div>
+            &lt;h2>Vous pouvez gérer les catways ici&lt;/h2>
+            &lt;div className="mb-4">
+                &lt;h3>Liste des catways&lt;/h3>
+                &lt;button type="button" className="btn btn-primary " data-bs-toggle="modal" data-bs-target="#ModalList">Afficher&lt;/button>
+            &lt;/div>
+
+            {/*Modale*/}
+            &lt;div className="modal fade" id="ModalList" tabIndex="-1" aria-hidden="true"> 
+                &lt;div className="modal-dialog modal-dialog-centered">
+                    &lt;div className="modal-content bg-dark text-white">
+                        &lt;div className="modal-header">
+                            &lt;h3 className="modal-title" id="modalLabel">Liste des catways&lt;/h3>
+                            &lt;button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">&lt;/button>
+                        &lt;/div>
+                        &lt;div className="modal-body">
+                            &lt;div className="row align-items-center">
+                               &lt;CatwayList refresh={refresh} />
+                            &lt;/div>
+                        &lt;/div>
+                        &lt;div className="modal-footer">
+                            &lt;button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Fermer&lt;/button>
+                        &lt;/div>
+                    &lt;/div>
+                &lt;/div>
+            &lt;/div>
+
+            &lt;h3>Rechercher les détails d'un catway&lt;/h3>
+            &lt;div className="d-flex gap-2 mb-4">
+                &lt;input type="number" className="form-control" placeholder="Numéro du catway" value={catwayNumber} onChange={(e) => setCatwayNumber(e.target.value)}/>
+                &lt;Link className="btn btn-primary" to={`/catways/${catwayNumber}`}>Détails&lt;/Link>
+            &lt;/div>
+            &lt;h3>Supprimer un catway&lt;/h3>
+            &lt;div className="d-flex gap-2 mb-4">
+                &lt;input type="number" className="form-control" placeholder="Numéro du catway à supprimer" value={deleteNumber} onChange={(e) => setDeleteNumber(e.target.value)}/>
+                &lt;button className="btn btn-danger" onClick={deleteCatway}>Supprimer&lt;/button>
+
+            &lt;/div>
+
+            &lt;h3>Modifier un catway&lt;/h3>
+            &lt;form onSubmit={updateCatway}>
+                &lt;div className="mb-3">
+                    &lt;input placeholder="Numéro du catway" type="number" className="form-control" value={updateNumber} onChange={(e) => setUpdateNumber(e.target.value)}/>
+                &lt;/div>
+                &lt;div className="mb-3">
+                    &lt;input placeholder="Nouvel état" type="text" className="form-control" value={updateState} onChange={(e) => setUpdateState(e.target.value)}/>
+                &lt;/div>
+                &lt;button type="submit" className="btn btn-primary">Modifier&lt;/button>
+            &lt;/form>   
+            &lt;h3>Ajouter un catway&lt;/h3>
+            &lt;form onSubmit={addCatway}>
+                &lt;div className="row mb-3">
+                    &lt;label className="col-sm-4 col-form-label">Numéro du nouveau catway&lt;/label>
+                    &lt;div className="col-sm-8">
+                        &lt;input type="number" className="form-control" value={newNumber} onChange={(e) => setNewNumber(e.target.value)}/>
+                    &lt;/div>
+                &lt;/div>
+                &lt;fieldset className="row mb-3">
+                    &lt;legend className="col-form-label col-sm-2 pt-0">Type&lt;/legend>
+                    &lt;div className="col-sm-10">
+                        &lt;div className="form-check">
+                            &lt;input className="form-check-input" type="radio" name="type" value="long" checked={newType === "long"} onChange={(e) => setNewType(e.target.value)}/>
+                            &lt;label className="form-check-label">Long&lt;/label>
+                            &lt;/div>
+                            &lt;div class="form-check">
+                            &lt;input className="form-check-input" type="radio" name="type" value="short" checked={newType === "short"} onChange={(e) => setNewType(e.target.value)}/>
+                            &lt;label class="form-check-label">Short&lt;/label>
+                        &lt;/div>
+                    &lt;/div>
+                &lt;/fieldset>
+                &lt;div className="row mb-3">
+                    &lt;label className="col-sm-4 col-form-label">Etat du catway&lt;/label>
+                    &lt;div className="col-sm-8">
+                        &lt;input type="text" className="form-control" value={newState} onChange={(e) => setNewState(e.target.value)}/>
+                    &lt;/div>
+                &lt;/div>
+                &lt;div className="col-12">
+                    &lt;button type="submit" className="btn btn-primary">Ajouter&lt;/button>
+                &lt;/div>
+            &lt;/form> 
+            &lt;Link className="btn btn-secondary m-5" to={`/tableau_de_bord`}>Retour au tableau de bord&lt;/Link> 
+        &lt;/div>      
+    &lt;/main>
+  );
+};
+
+export default Catways;
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Accueil">Accueil</a></li><li><a href="global.html#CatwayList">CatwayList</a></li><li><a href="global.html#Catways">Catways</a></li><li><a href="global.html#GetCatway">GetCatway</a></li><li><a href="global.html#GetReservation">GetReservation</a></li><li><a href="global.html#GetUser">GetUser</a></li><li><a href="global.html#ReservationList">ReservationList</a></li><li><a href="global.html#Reservations">Reservations</a></li><li><a href="global.html#ReservationsCatway">ReservationsCatway</a></li><li><a href="global.html#TableauDeBord">TableauDeBord</a></li><li><a href="global.html#UserList">UserList</a></li><li><a href="global.html#Utilisateurs">Utilisateurs</a></li><li><a href="global.html#add">add</a></li><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#delete">delete</a></li><li><a href="global.html#getAllReservations">getAllReservations</a></li><li><a href="global.html#getByEmail">getByEmail</a></li><li><a href="global.html#getById">getById</a></li><li><a href="global.html#getCurrentReservations">getCurrentReservations</a></li><li><a href="global.html#getList">getList</a></li><li><a href="global.html#update">update</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jan 08 2026 20:31:54 GMT+0100 (heure normale d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

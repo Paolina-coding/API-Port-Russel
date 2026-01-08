@@ -1,6 +1,18 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+/**
+ * Affiche les informations d’un utilisateur.
+ *
+ * Le composant récupère l’adresse email depuis les paramètres d’URL puis effectue un appel API vers `/users/:email` afin de charger les informations.
+ *
+ * - Si l’utilisateur n’existe pas ou si l’API renvoie une erreur, un message d’erreur est affiché avec un bouton pour revenir au gestionnaire des utilisateurs.
+ * - Tant que les données ne sont pas encore chargées, un message “Chargement...” est affiché.
+ * - Une fois les données récupérées, les informations de l’utilisateur (nom d’utilisateur, email) sont affichées dans une carte Bootstrap.
+ *
+ * @component
+ * @returns {JSX.Element} Une carte affichant les informations de l’utilisateur ou un message d’erreur
+ */
 const GetUser = () => {
     const { email } = useParams(); 
     const [user, setUser] = useState(null);

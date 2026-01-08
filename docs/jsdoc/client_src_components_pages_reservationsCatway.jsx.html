@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/components/pages/reservationsCatway.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/components/pages/reservationsCatway.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Link, useParams } from "react-router-dom";
+import { useState } from "react";
+import ReservationList from '../reservationList';
+
+/**
+ * Page de gestion complète des réservations.
+ *
+ * Ce composant permet d’afficher, ajouter, modifier, supprimer et consulter les détails des réservations.  
+ * - Afficher la liste des réservations via une modale Bootstrap.
+ * - Rechercher une réservation par son identifiant et accéder à sa page de détails.
+ * - Ajouter une réservation en renseignant le numéro du catway, le nom du client et du bateau et les dates de début et fin.
+ * - Modifier une réservation.
+ * - Supprimer une réservation en indiquant son identifiant.
+ *
+ * - Le token JWT est récupéré depuis le `localStorage` et envoyé dans l’en-tête `Authorization` pour toutes les requêtes API.
+ * - Après chaque ajout, modification ou suppression, `refresh` est modifié pour mettre à jour la liste des réservations.
+ * - Les messages serveur ou API sont affichées via `alert()` et loggées dans la console.
+ *
+ * @component
+ * @returns {JSX.Element} Une interface complète de gestion des réservations avec formulaires et modale d’affichage
+ */
+const ReservationsCatway = () => {
+    const {catwayNumber} = useParams();
+    const [newClientName, setNewClientName] = useState("");
+    const [newBoatName, setNewBoatName] = useState("");
+    const [newStartDate, setNewStartDate] = useState("");
+    const [newEndDate, setNewEndDate] = useState("");
+    const [reservationId, setReservationId] = useState("");
+    const [deleteId, setDeleteId] = useState("");
+    const [refresh, setRefresh] = useState(false);
+    const [updateId, setUpdateId] = useState("");
+    const [updateClientName, setUpdateClientName] = useState(undefined);
+    const [updateBoatName, setUpdateBoatName] = useState(undefined);
+    const [updateStartDate, setUpdateStartDate] = useState(undefined);
+    const [updateEndDate, setUpdateEndDate] = useState(undefined);
+    const token = localStorage.getItem("token");
+
+//ajout d'une nouvelle réservation
+    const addReservation = async (e) => {
+        e.preventDefault(); // empêche le rechargement de la page
+        if (!newClientName || !newBoatName || !newStartDate || !newEndDate) {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        const newReservation = {
+            catwayNumber : Number(catwayNumber),
+            clientName : newClientName,
+            boatName : newBoatName,
+            startDate : newStartDate,
+            endDate : newEndDate,
+        };
+
+        try {
+            const response = await fetch(`/catways/${catwayNumber}/reservations/add`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify(newReservation)
+            });
+
+            if (response.ok) {
+                alert("Réservation ajoutée !");
+                setNewClientName("");
+                setNewBoatName("");
+                setNewStartDate("");
+                setNewEndDate("");
+                setRefresh(prev => !prev); //refresh de la liste des réservations
+
+            } else {
+                alert("Erreur lors de l'ajout");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erreur serveur");
+        }
+    };
+
+//modification d'une réservation 
+const updateReservation = async (e) => {
+    e.preventDefault();
+
+    if (!updateId) {
+        alert("Veuillez entrer l'identifiant de la réservation à modifier.");
+        return;
+    }
+
+    const body = {};
+
+    if (updateClientName !== undefined) body.clientName = updateClientName; 
+    if (updateBoatName !== undefined) body.boatName = updateBoatName; 
+    if (updateStartDate !== undefined) body.startDate = updateStartDate; 
+    if (updateEndDate !== undefined) body.endDate = updateEndDate;
+    console.log("BODY ENVOYÉ :", body);
+    if (Object.keys(body).length === 0) {
+        alert("Aucun champ à modifier.");
+        return;
+    }
+
+    const response = await fetch(`/catways/${catwayNumber}/reservations/${updateId}`, {
+        method: "PUT",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+        alert("Réservation modifiée !");
+        setRefresh(prev => !prev);
+    } else {
+        alert("Erreur lors de la modification");
+    }
+};
+
+//suppression d'une réservation
+    const deleteReservation = async (e) => {
+        e.preventDefault(); // empêche le rechargement de la page
+        if (!deleteId) {
+            alert("Veuillez entrer l'id de la réservation à supprimer. Vous pouvez trouver celui ci en regardant la liste des réservations.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/catways/${catwayNumber}/reservations/${deleteId}`, {
+                method: "DELETE",
+                headers : {"Authorization": "Bearer " + token}
+            });
+
+            if (response.ok) {
+                alert("Réservation supprimée !");
+                setDeleteId("");
+                setRefresh(prev => !prev); //refresh de la liste des réservations
+
+            } else {
+                alert("Erreur lors de la suppression");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erreur serveur");
+        }
+    };
+
+//affichage du site
+  return (
+    &lt;main className="container">
+      &lt;div className="text-center">
+        &lt;h1>Catways&lt;/h1>
+      &lt;/div>
+      &lt;hr />
+        &lt;div>
+            &lt;h2>Vous pouvez gérer les réservations du catway numéro {catwayNumber} ici&lt;/h2>
+            &lt;div className="mb-4">
+                &lt;h3>Liste des réservations&lt;/h3>
+                &lt;button type="button" className="btn btn-primary " data-bs-toggle="modal" data-bs-target="#ModalList">Afficher&lt;/button>
+            &lt;/div>
+
+            {/*Modale*/}
+            &lt;div className="modal fade" id="ModalList" tabIndex="-1" aria-hidden="true"> 
+                &lt;div className="modal-dialog modal-dialog-centered">
+                    &lt;div className="modal-content bg-dark text-white">
+                        &lt;div className="modal-header">
+                            &lt;h3 className="modal-title" id="modalLabel">Liste des réservations&lt;/h3>
+                            &lt;button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">&lt;/button>
+                        &lt;/div>
+                        &lt;div className="modal-body">
+                            &lt;div className="row align-items-center">
+                               &lt;ReservationList refresh={refresh} /> 
+                            &lt;/div>
+                        &lt;/div>
+                        &lt;div className="modal-footer">
+                            &lt;button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Fermer&lt;/button>
+                        &lt;/div>
+                    &lt;/div>
+                &lt;/div>
+            &lt;/div>
+
+            &lt;h3>Rechercher les détails d'une réservation&lt;/h3>
+            &lt;div className="d-flex gap-2 mb-4">
+                &lt;input type="text" className="form-control" placeholder="Identifiant de la réservation" value={reservationId} onChange={(e) => setReservationId(e.target.value)}/>
+                &lt;Link className="btn btn-primary" to={`/catways/${catwayNumber}/reservations/${reservationId}`}>Détails&lt;/Link>
+            &lt;/div>
+
+            &lt;h3>Ajouter une réservation&lt;/h3>
+            &lt;form onSubmit={addReservation}>
+                &lt;div className="row mb-3">
+                    &lt;input type="text" className="form-control" placeholder="Nom du client" value={newClientName} onChange={(e) => setNewClientName(e.target.value)}/>               
+                    &lt;input type="text" className="form-control" placeholder="Nom du bateau" value={newBoatName} onChange={(e) => setNewBoatName(e.target.value)}/>
+                    &lt;label className="col-sm-3 col-form-label">Date de début de la réservation&lt;/label>
+                    &lt;div className="col-sm-9">
+                        &lt;input type="date" className="form-control" value={newStartDate} onChange={(e) => setNewStartDate(e.target.value)}/>
+                    &lt;/div>
+                    &lt;label className="col-sm-3 col-form-label">Date de fin de la réservation&lt;/label>
+                    &lt;div className="col-sm-9">
+                        &lt;input type="date" className="form-control" value={newEndDate} onChange={(e) => setNewEndDate(e.target.value)}/>
+                    &lt;/div>
+                &lt;/div>
+                &lt;div className="col-12">
+                    &lt;button type="submit" className="btn btn-primary">Ajouter&lt;/button>
+                &lt;/div>
+            &lt;/form> 
+
+            &lt;h3>Modifier une réservation&lt;/h3>
+            &lt;form onSubmit={updateReservation}>
+                &lt;div className="row mb-3">
+                    &lt;input type="text" className="form-control mb-2" placeholder="ID de la réservation (obligatoire)" value={updateId} onChange={(e) => setUpdateId(e.target.value)}/>
+                    &lt;input type="text" className="form-control mb-2" placeholder="Nouveau nom du client" value={updateClientName} onChange={(e) => setUpdateClientName(e.target.value)}/>
+                    &lt;input type="text" className="form-control mb-2" placeholder="Nouveau nom du bateau" value={updateBoatName} onChange={(e) => setUpdateBoatName(e.target.value)}/>
+                    &lt;label className="col-sm-3 col-form-label">Nouvelle date de début de la réservation&lt;/label>
+                    &lt;div className="col-sm-9">
+                        &lt;input type="date" className="form-control" value={updateStartDate} onChange={(e) => setUpdateStartDate(e.target.value)}/>
+                    &lt;/div>
+                    &lt;label className="col-sm-3 col-form-label">Nouvelle date de fin de la réservation&lt;/label>
+                    &lt;div className="col-sm-9">
+                        &lt;input type="date" className="form-control" value={updateEndDate} onChange={(e) => setUpdateEndDate(e.target.value)}/>
+                    &lt;/div>
+                &lt;/div>
+                &lt;button className="btn btn-primary">Modifier&lt;/button>
+            &lt;/form>
+
+            &lt;h3>Supprimer une réservation&lt;/h3>
+            &lt;div className="d-flex gap-2 mb-4">
+                &lt;input type="text" className="form-control" placeholder="Identifiant de la réservation à supprimer" value={deleteId} onChange={(e) => setDeleteId(e.target.value)}/>
+                &lt;button className="btn btn-danger" onClick={deleteReservation}>Supprimer&lt;/button>
+
+            &lt;/div>
+
+            &lt;div className="text-center mt-3">
+                &lt;Link to="/reservations" className="btn btn-secondary">Retour à la sélection du catway&lt;/Link>
+                &lt;Link className="btn btn-secondary m-5" to="/tableau_de_bord">Retour au tableau de bord&lt;/Link> 
+            &lt;/div>
+        &lt;/div>      
+    &lt;/main>
+  );
+};
+
+export default ReservationsCatway;
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Accueil">Accueil</a></li><li><a href="global.html#CatwayList">CatwayList</a></li><li><a href="global.html#Catways">Catways</a></li><li><a href="global.html#GetCatway">GetCatway</a></li><li><a href="global.html#GetReservation">GetReservation</a></li><li><a href="global.html#GetUser">GetUser</a></li><li><a href="global.html#ReservationList">ReservationList</a></li><li><a href="global.html#Reservations">Reservations</a></li><li><a href="global.html#ReservationsCatway">ReservationsCatway</a></li><li><a href="global.html#TableauDeBord">TableauDeBord</a></li><li><a href="global.html#UserList">UserList</a></li><li><a href="global.html#Utilisateurs">Utilisateurs</a></li><li><a href="global.html#add">add</a></li><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#delete">delete</a></li><li><a href="global.html#getAllReservations">getAllReservations</a></li><li><a href="global.html#getByEmail">getByEmail</a></li><li><a href="global.html#getById">getById</a></li><li><a href="global.html#getCurrentReservations">getCurrentReservations</a></li><li><a href="global.html#getList">getList</a></li><li><a href="global.html#update">update</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jan 08 2026 20:31:54 GMT+0100 (heure normale d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

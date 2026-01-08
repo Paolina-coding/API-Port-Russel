@@ -1,6 +1,19 @@
 import Header from "../header.jsx";
 import { useEffect, useState } from "react";
 
+/**
+ * Tableau de bord de l’application affiché après une connexion.
+ *
+ * Ce composant affiche un résumé personnalisé pour l’utilisateur connecté et la liste des réservations actuellement en cours.  
+ * Les informations utilisateur sont récupérées depuis le `localStorage`, tandis que les réservations actives sont chargées via l’API `/reservations/current`.
+ * - Un appel API est effectué pour récupérer les réservations dont la période inclut la date du jour.
+ * - Le token JWT est récupéré depuis le `localStorage` et envoyé dans l’en-tête `Authorization` pour sécuriser la requête.
+ * - Les réservations sont affichées sous forme de liste, avec le numéro du catway, le nom du client et les dates.
+ * - Si aucune réservation n’est en cours, un message informatif est affiché.
+ *
+ * @component
+ * @returns {JSX.Element} Le tableau de bord affichant les informations utilisateur et les réservations en cours
+ */
 
 const TableauDeBord = () => {
   const dateActuelle = new Date().toLocaleDateString("fr-FR");
@@ -39,6 +52,10 @@ const TableauDeBord = () => {
                 <li key={r._id}> Catway {r.catwayNumber} — Client : {r.clientName} <br /> Du {new Date(r.startDate).toLocaleDateString("fr-FR")} au {new Date(r.endDate).toLocaleDateString("fr-FR")} </li> ))} 
             </ul>     
           </div>
+        </div>
+        <div>
+          <a href="http://localhost:8080/documentation" className="btn btn-secondary" target="_blank"> Documentation </a>
+
         </div>
       </div>      
     </main>

@@ -1,6 +1,19 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
+/**
+ * Page permettant d’accéder aux réservations d’un catway.
+ *
+ * Le composant demande à l’utilisateur de saisir un numéro de catway, puis génère dynamiquement un lien vers la page listant les réservations associées :
+ * - Le champ de saisie met à jour l’état `catwayNumber` à chaque frappe.
+ * - Le bouton “Valider” est désactivé tant qu’aucun numéro n’est renseigné.
+ * - Une fois un numéro saisi, l’utilisateur peut accéder à la page des réservations du catway correspondant.
+ * - Un bouton permet également de revenir au tableau de bord.
+ *
+ * @component
+ * @returns {JSX.Element} Une interface simple permettant de sélectionner un catway pour consulter ses réservations
+ */
+
 const Reservations = () => {
   const [catwayNumber, setCatwayNumber] = useState("");
   return (
