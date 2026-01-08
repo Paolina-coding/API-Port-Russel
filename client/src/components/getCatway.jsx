@@ -1,6 +1,18 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+/**
+ * Affiche les détails d’un catway.
+ *
+ * Le composant récupère l’identifiant du catway depuis les paramètres d’URL, puis effectue un appel API vers `/catways/:id` pour récupérer les informations du catway.
+ *
+ * - Si l’API renvoie une erreur (catway inexistant, token invalide, etc.), un message d’erreur est affiché avec un bouton pour revenir au gestionnaire des catways.
+ * - Tant que les données ne sont pas encore chargées, un message “Chargement...” est affiché.
+ * - Une fois les données récupérées, les détails du catway (numéro, type, état) sont affichés dans une carte Bootstrap.
+ *
+ * @component
+ * @returns {JSX.Element} Une carte affichant les détails du catway ou un message d’erreur
+ */
 const GetCatway = () => {
     const { id } = useParams(); 
     const [catway, setCatway] = useState(null);

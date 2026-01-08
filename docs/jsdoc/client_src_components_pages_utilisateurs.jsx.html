@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/components/pages/utilisateurs.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/components/pages/utilisateurs.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Link } from "react-router-dom";
+import { useState } from "react";
+import UserList from "../userList";
+
+/**
+ * Page de gestion complète des utilisateurs.
+ *
+ * Ce composant permet d’afficher, ajouter, modifier, supprimer et consulter les détails des utilisateurs:  
+ * - Afficher la liste des utilisateurs via une modale Bootstrap.
+ * - Rechercher un utilisateur par son email et accéder à sa page de détails.
+ * - Ajouter un utilisateur en renseignant son nom d'utilisateur, son email et son mot de passe.
+ * - Modifier un utilisateur.
+ * - Supprimer un utilisateur en indiquant son email.
+ *
+ * Sécurité :
+ * - Le token JWT est récupéré depuis le `localStorage` et envoyé dans l’en-tête `Authorization` pour toutes les requêtes API.
+ * - Après chaque ajout, modification ou suppression, `refresh` est modifié pour mettre à jour la liste.
+ * - Les messages serveur ou API sont affichées via `alert()` et loggées dans la console.
+ *
+ * @component
+ * @returns {JSX.Element} Une interface complète de gestion des utilisateurs avec formulaires et modale d’affichage
+ */
+const Utilisateurs = () => {
+    const [newUsername, setNewUsername] = useState("");
+    const [newEmail, setNewEmail] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [email, setEmail] = useState("");
+    const [deleteEmail, setDeleteEmail] = useState("");
+    const [refresh, setRefresh] = useState(false);
+    const [updateEmail, setUpdateEmail] = useState(""); 
+    const [updateUsername, setUpdateUsername] = useState(""); 
+    const [updatePassword, setUpdatePassword] = useState("");
+    const token = localStorage.getItem("token");
+
+//ajout d'un nouvel utilisateur
+    const addUser = async (e) => {
+        e.preventDefault(); // empêche le rechargement de la page
+        if (!newUsername || !newEmail || !newPassword) {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        const newUser = {
+            username : newUsername,
+            email: newEmail,
+            password: newPassword
+        };
+
+        try {
+            const response = await fetch("/users/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify(newUser)
+            });
+
+            if (response.ok) {
+                alert("Utilisateur ajouté !");
+                setNewUsername("");
+                setNewEmail("");
+                setNewPassword("");
+                setRefresh(prev => !prev); //refresh de la liste des utilisateurs
+
+            } else {
+                alert("Erreur lors de l'ajout");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erreur serveur");
+        }
+    };
+
+//modification d'un utilisateur
+const updateUser = async (e) => {
+    e.preventDefault();
+
+    if (!updateEmail) {
+        alert("Veuillez entrer l'adresse mail de l'utilisateur à modifier.");
+        return;
+    }
+
+    const body = {};
+
+    if (updateUsername !== undefined) body.username = updateUsername; 
+    if (updatePassword !== undefined) body.password = updatePassword; 
+    if (Object.keys(body).length === 0) {
+        alert("Aucun champ à modifier.");
+        return;
+    }
+
+    const response = await fetch(`/users/${updateEmail}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+        alert("Utilisateur modifié !");
+        setUpdatePassword("");
+        setUpdateUsername("");
+        setUpdateEmail("");
+        setRefresh(prev => !prev);
+    } else {
+        alert("Erreur lors de la modification");
+    }
+};
+
+
+//suppression d'un utilisateur
+    const deleteUser = async (e) => {
+        e.preventDefault(); // empêche le rechargement de la page
+        if (!deleteUser) {
+            alert("Veuillez entrer l'email de l'utilisateur à supprimer");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/users/${deleteEmail}`, {
+                method: "DELETE",
+                headers: { "Authorization": "Bearer " + token }
+            });
+
+            if (response.ok) {
+                alert("Utilisateur supprimé !");
+                setDeleteEmail("");
+                setRefresh(prev => !prev); //refresh de la liste des utilisateurs
+
+            } else {
+                alert("Erreur lors de la suppression");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erreur serveur");
+        }
+    };
+
+//affichage du site
+  return (
+    &lt;main className="container">
+      &lt;div className="text-center">
+        &lt;h1>Utilisateurs&lt;/h1>
+      &lt;/div>
+      &lt;hr />
+        &lt;div>
+            &lt;h2>Vous pouvez gérer les utilisateurs ici&lt;/h2>
+            &lt;div className="mb-4">
+                &lt;h3>Liste des utilisateurs&lt;/h3>
+                &lt;button type="button" className="btn btn-primary " data-bs-toggle="modal" data-bs-target="#ModalList">Afficher&lt;/button>
+            &lt;/div>
+
+            {/*Modale*/}
+            &lt;div className="modal fade" id="ModalList" tabIndex="-1" aria-hidden="true"> 
+                &lt;div className="modal-dialog modal-dialog-centered">
+                    &lt;div className="modal-content bg-dark text-white">
+                        &lt;div className="modal-header">
+                            &lt;h3 className="modal-title" id="modalLabel">Liste des utilisateurs&lt;/h3>
+                            &lt;button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">&lt;/button>
+                        &lt;/div>
+                        &lt;div className="modal-body">
+                            &lt;div className="row align-items-center">
+                               &lt;UserList refresh={refresh} />
+                            &lt;/div>
+                        &lt;/div>
+                        &lt;div className="modal-footer">
+                            &lt;button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Fermer&lt;/button>
+                        &lt;/div>
+                    &lt;/div>
+                &lt;/div>
+            &lt;/div>
+
+            &lt;h3>Rechercher les détails d'un utilisateur&lt;/h3>
+            &lt;div className="d-flex gap-2 mb-4">
+                &lt;input type="text" className="form-control" placeholder="email de l'utilisateur" value={email} onChange={(e) => setEmail(e.target.value)}/>
+                &lt;Link className="btn btn-primary" to={`/users/${email}`}>Détails&lt;/Link>
+            &lt;/div>
+            &lt;h3>Supprimer un utilisateur&lt;/h3>
+            &lt;div className="d-flex gap-2 mb-4">
+                &lt;input type="text" className="form-control" placeholder="Email de l'utilisateur à supprimer" value={deleteEmail} onChange={(e) => setDeleteEmail(e.target.value)}/>
+                &lt;button className="btn btn-danger" onClick={deleteUser}>Supprimer&lt;/button>
+
+            &lt;/div>
+
+            &lt;h3>Modifier un utilisateur&lt;/h3>
+            &lt;form onSubmit={updateUser}>
+                &lt;div className="mb-3">
+                    &lt;input placeholder="Email de l'utiliateur" type="text" className="form-control" value={updateEmail} onChange={(e) => setUpdateEmail(e.target.value)}/>
+                &lt;/div>
+                &lt;div className="mb-3">
+                    &lt;input placeholder="Nouveau nom d'utilisateur" type="text" className="form-control" value={updateUsername} onChange={(e) => setUpdateUsername(e.target.value)}/>
+                &lt;/div>
+                &lt;div className="mb-3">
+                    &lt;input placeholder="Nouveau mot de passe" type="password" className="form-control" value={updatePassword} onChange={(e) => setUpdatePassword(e.target.value)}/>
+                &lt;/div>
+                &lt;button type="submit" className="btn btn-primary">Modifier&lt;/button>
+            &lt;/form>   
+            &lt;h3>Ajouter un utilisateur&lt;/h3>
+            &lt;form onSubmit={addUser}>
+                &lt;div className="row mb-3">
+                    &lt;label className="col-sm-4 col-form-label">Email du nouvel utilisateur&lt;/label>
+                    &lt;div className="col-sm-8">
+                        &lt;input type="text" className="form-control" value={newEmail} onChange={(e) => setNewEmail(e.target.value)}/>
+                    &lt;/div>
+                &lt;/div>
+                &lt;div className="row mb-3">
+                    &lt;label className="col-sm-4 col-form-label">Nom d'utilisateur&lt;/label>
+                    &lt;div className="col-sm-8">
+                        &lt;input type="text" className="form-control" value={newUsername} onChange={(e) => setNewUsername(e.target.value)}/>
+                    &lt;/div>
+                &lt;/div>
+                &lt;div className="row mb-3">
+                    &lt;label className="col-sm-4 col-form-label">Mot de passe&lt;/label>
+                    &lt;div className="col-sm-8">
+                        &lt;input type="password" className="form-control" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}/>
+                    &lt;/div>
+                &lt;/div>
+                &lt;div className="col-12">
+                    &lt;button type="submit" className="btn btn-primary">Ajouter&lt;/button>
+                &lt;/div>
+            &lt;/form> 
+            &lt;Link className="btn btn-secondary m-5" to={`/tableau_de_bord`}>Retour au tableau de bord&lt;/Link> 
+        &lt;/div>      
+    &lt;/main>
+  );
+};
+
+export default Utilisateurs;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Accueil">Accueil</a></li><li><a href="global.html#CatwayList">CatwayList</a></li><li><a href="global.html#Catways">Catways</a></li><li><a href="global.html#GetCatway">GetCatway</a></li><li><a href="global.html#GetReservation">GetReservation</a></li><li><a href="global.html#GetUser">GetUser</a></li><li><a href="global.html#ReservationList">ReservationList</a></li><li><a href="global.html#Reservations">Reservations</a></li><li><a href="global.html#ReservationsCatway">ReservationsCatway</a></li><li><a href="global.html#TableauDeBord">TableauDeBord</a></li><li><a href="global.html#UserList">UserList</a></li><li><a href="global.html#Utilisateurs">Utilisateurs</a></li><li><a href="global.html#add">add</a></li><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#delete">delete</a></li><li><a href="global.html#getAllReservations">getAllReservations</a></li><li><a href="global.html#getByEmail">getByEmail</a></li><li><a href="global.html#getById">getById</a></li><li><a href="global.html#getCurrentReservations">getCurrentReservations</a></li><li><a href="global.html#getList">getList</a></li><li><a href="global.html#update">update</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jan 08 2026 20:31:54 GMT+0100 (heure normale d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

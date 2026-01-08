@@ -1,0 +1,12 @@
+{
+  "source": {
+    "include": ["server", "client"],
+    "includePattern": ".+\\.(js|jsx)$",
+    "excludePattern": "(node_modules|docs)"
+  },
+  "opts": {
+    "destination": "./docs/jsdoc",
+    "recurse": true
+  }
+}
+

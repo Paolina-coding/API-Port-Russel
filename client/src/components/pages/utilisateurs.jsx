@@ -2,6 +2,24 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import UserList from "../userList";
 
+/**
+ * Page de gestion complète des utilisateurs.
+ *
+ * Ce composant permet d’afficher, ajouter, modifier, supprimer et consulter les détails des utilisateurs:  
+ * - Afficher la liste des utilisateurs via une modale Bootstrap.
+ * - Rechercher un utilisateur par son email et accéder à sa page de détails.
+ * - Ajouter un utilisateur en renseignant son nom d'utilisateur, son email et son mot de passe.
+ * - Modifier un utilisateur.
+ * - Supprimer un utilisateur en indiquant son email.
+ *
+ * Sécurité :
+ * - Le token JWT est récupéré depuis le `localStorage` et envoyé dans l’en-tête `Authorization` pour toutes les requêtes API.
+ * - Après chaque ajout, modification ou suppression, `refresh` est modifié pour mettre à jour la liste.
+ * - Les messages serveur ou API sont affichées via `alert()` et loggées dans la console.
+ *
+ * @component
+ * @returns {JSX.Element} Une interface complète de gestion des utilisateurs avec formulaires et modale d’affichage
+ */
 const Utilisateurs = () => {
     const [newUsername, setNewUsername] = useState("");
     const [newEmail, setNewEmail] = useState("");

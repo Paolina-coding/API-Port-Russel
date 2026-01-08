@@ -1,6 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Page d’accueil de l’application avec le formulaire de connexion.
+ *
+ * Le composant permet à un utilisateur de s’authentifier via l’API `/users/authenticate`:
+ * - Lors de la soumission du formulaire, une requête POST est envoyée avec l’email et le mot de passe saisis.
+ * - Si la réponse n’est pas valide, un message d’erreur est affiché.
+ * - Si l’authentification réussit, le token JWT et les informations utilisateur sont stockés dans le `localStorage`.
+ * - L’utilisateur est ensuite redirigé vers `/tableau_de_bord`.
+ * 
+ * @component
+ * @returns {JSX.Element} La page d’accueil avec présentation et formulaire de connexion
+ */
 const Accueil = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -65,7 +77,7 @@ const Accueil = () => {
         <hr />
         <div className="accordion-item">
             <h2>Documentation de l'API</h2>
-            <a href="https://github.com/Paolina-coding/API-Port-Russel/">Cliquer pour afficher</a>
+            <a href="http://localhost:8080/documentation" className="btn btn-secondary" target="_blank">Cliquer pour afficher</a>
         </div>
       </div>      
     </main>

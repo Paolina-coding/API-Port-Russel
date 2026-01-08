@@ -2,6 +2,23 @@ import { Link, useParams } from "react-router-dom";
 import { useState } from "react";
 import ReservationList from '../reservationList';
 
+/**
+ * Page de gestion complète des réservations.
+ *
+ * Ce composant permet d’afficher, ajouter, modifier, supprimer et consulter les détails des réservations.  
+ * - Afficher la liste des réservations via une modale Bootstrap.
+ * - Rechercher une réservation par son identifiant et accéder à sa page de détails.
+ * - Ajouter une réservation en renseignant le numéro du catway, le nom du client et du bateau et les dates de début et fin.
+ * - Modifier une réservation.
+ * - Supprimer une réservation en indiquant son identifiant.
+ *
+ * - Le token JWT est récupéré depuis le `localStorage` et envoyé dans l’en-tête `Authorization` pour toutes les requêtes API.
+ * - Après chaque ajout, modification ou suppression, `refresh` est modifié pour mettre à jour la liste des réservations.
+ * - Les messages serveur ou API sont affichées via `alert()` et loggées dans la console.
+ *
+ * @component
+ * @returns {JSX.Element} Une interface complète de gestion des réservations avec formulaires et modale d’affichage
+ */
 const ReservationsCatway = () => {
     const {catwayNumber} = useParams();
     const [newClientName, setNewClientName] = useState("");

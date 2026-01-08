@@ -1,6 +1,18 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+/**
+ * Affiche les détails d’une réservation pour un catway.
+ *
+ * Le composant récupère les paramètres `catwayNumber` et `idReservation` depuis l’URL puis effectue un appel API vers `/catways/:catwayNumber/reservations/:idReservation` pour récupérer les informations.
+ * 
+ * - Si la réservation n’existe pas ou si l’API renvoie une erreur, un message d’erreur est affiché avec un bouton pour revenir au gestionnaire des réservations.
+ * - Tant que les données ne sont pas encore chargées, un message “Chargement...” est affiché.
+ * - Une fois les données récupérées, les détails de la réservation (client, bateau, dates de début et de fin) sont affichés dans une carte Bootstrap.
+ *
+ * @component
+ * @returns {JSX.Element} Une carte affichant les détails de la réservation ou un message d’erreur
+ */
 const GetReservation = () => {
     const { catwayNumber, idReservation } = useParams();
     const [reservation, setReservation] = useState(null);
