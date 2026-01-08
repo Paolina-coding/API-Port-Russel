@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { API_URL } from "../config";
 
 /**
  * Affiche les détails d’un catway.
@@ -21,7 +22,7 @@ const GetCatway = () => {
     useEffect(() => {
         const token = localStorage.getItem("token");
 
-        fetch(`/catways/${id}`, { headers: { "Authorization": "Bearer " + token }})
+        fetch(`${API_URL}/catways/${id}`, { headers: { "Authorization": "Bearer " + token }})
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Catway introuvable");

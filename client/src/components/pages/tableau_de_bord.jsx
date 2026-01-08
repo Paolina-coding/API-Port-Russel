@@ -1,5 +1,6 @@
 import Header from "../header.jsx";
 import { useEffect, useState } from "react";
+import { API_URL } from "../../config";
 
 /**
  * Tableau de bord de l’application affiché après une connexion.
@@ -23,7 +24,7 @@ const TableauDeBord = () => {
   useEffect(() => { 
     const token = localStorage.getItem("token"); 
     
-    fetch("/reservations/current", { headers: { "Authorization": "Bearer " + token } }) 
+    fetch(`${API_URL}/reservations/current"`, { headers: { "Authorization": "Bearer " + token } }) 
     .then(res => res.json()) 
     .then(data => {setCurrentReservations(data)}) 
     .catch(err => console.error(err)); 
@@ -54,8 +55,7 @@ const TableauDeBord = () => {
           </div>
         </div>
         <div>
-          <a href="http://localhost:8080/documentation" className="btn btn-secondary" target="_blank"> Documentation </a>
-
+          <a href="https://api-port-russel-4c7k.onrender.com/documentation" className="btn btn-secondary" target="_blank"> Documentation </a>
         </div>
       </div>      
     </main>

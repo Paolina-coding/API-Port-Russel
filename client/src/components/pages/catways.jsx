@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import CatwayList from '../catwayList';
+import { API_URL } from "../../config";
 
 /**
  * Page de gestion complète des catways.
@@ -46,7 +47,7 @@ const Catways = () => {
         };
 
         try {
-            const response = await fetch("/catways/add", {
+            const response = await fetch(`${API_URL}/catways/add`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json" ,
@@ -81,7 +82,7 @@ const updateCatway = async (e) => {
     }
 
     try {
-        const response = await fetch(`/catways/${updateNumber}`, {
+        const response = await fetch(`${API_URL}/catways/${updateNumber}`, {
             method: "PUT",
             headers: { 
                 "Content-Type": "application/json",
@@ -114,7 +115,7 @@ const updateCatway = async (e) => {
         }
 
         try {
-            const response = await fetch(`/catways/${deleteNumber}`, {
+            const response = await fetch(`${API_URL}/catways/${deleteNumber}`, {
                 method: "DELETE",
                 headers:{"Authorization": "Bearer " + token}
             });
@@ -220,7 +221,7 @@ const updateCatway = async (e) => {
                     <button type="submit" className="btn btn-primary">Ajouter</button>
                 </div>
             </form> 
-            <Link className="btn btn-secondary m-5" to={`/tableau_de_bord`}>Retour au tableau de bord</Link> 
+            <Link className="btn btn-secondary m-5" to="/tableau_de_bord">Retour au tableau de bord</Link> 
         </div>      
     </main>
   );

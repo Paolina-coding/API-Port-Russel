@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { API_URL } from "../config";
 
 /**
  * Affiche les informations d’un utilisateur.
@@ -20,7 +21,7 @@ const GetUser = () => {
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        fetch(`/users/${email}`, { headers: { "Authorization": "Bearer " + token }})
+        fetch(`${API_URL}/users/${email}`, { headers: { "Authorization": "Bearer " + token }})
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Utilisateur introuvable");

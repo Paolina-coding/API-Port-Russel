@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { API_URL } from "../config";
 
 /**
  * Affiche la liste des réservations d’un catway.
@@ -20,7 +21,7 @@ const ReservationList = ({refresh}) => {
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        fetch(`/catways/${catwayNumber}/reservations`, {headers: { "Authorization": "Bearer " + token }})
+        fetch(`${API_URL}/catways/${catwayNumber}/reservations`, {headers: { "Authorization": "Bearer " + token }})
         .then(res => res.json())
         .then(data => setReservation(data))
         .catch(err => console.error(err));
