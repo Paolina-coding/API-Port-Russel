@@ -193,7 +193,8 @@ const updateCatway = async (e) => {
                 <div className="col-12">
                     <button type="submit" className="btn btn-primary">Ajouter</button>
                 </div>
-            </form>  
+            </form> 
+            <Link className="btn btn-secondary m-5" to={`/tableau_de_bord`}>Retour au tableau de bord</Link> 
         </div>      
     </main>
   );

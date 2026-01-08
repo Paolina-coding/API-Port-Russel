@@ -16,12 +16,12 @@ const Accueil = () => {
           <div>
             <form>
                 <div className="mb-3">
-                    <label htmlfor="InputEmail" className="form-label">Adresse Email</label>
-                    <input type="email" className="form-control" id="InputEmail1"/>
+                    <label className="form-label">Adresse Email</label>
+                    <input type="email" className="form-control" id="emailConnection"/>
                 </div>
                 <div className="mb-3">
-                    <label htmlfor="InputPassword" className="form-label">Mot de passe</label>
-                    <input type="password" className="form-control" id="InputPassword"/>
+                    <label className="form-label">Mot de passe</label>
+                    <input type="password" className="form-control" id="passwordConnection"/>
                 </div>
                 <button type="submit" className="btn btn-primary">Se connecter</button>
             </form>            

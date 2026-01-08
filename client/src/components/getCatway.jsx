@@ -33,10 +33,10 @@ const GetCatway = () => {
 
     return ( 
         <div>
-            <div class="card mx-auto mt-4" style={{width: "24rem"}}>
-                <div class="card-body">
-                    <h3 class="card-title">Détails du catway {catway.catwayNumber}</h3>
-                    <div class="card-text"><ul> 
+            <div className="card mx-auto mt-4" style={{width: "24rem"}}>
+                <div className="card-body">
+                    <h3 className="card-title">Détails du catway {catway.catwayNumber}</h3>
+                    <div className="card-text"><ul> 
                         <li>Type : {catway.catwayType}</li> 
                         <li>État : {catway.catwayState}</li>
                     </ul>

@@ -11,6 +11,7 @@ const Reservations = () => {
                 <input type="number" className="form-control" placeholder="Numéro du catway" value={catwayNumber} onChange={(e) => setCatwayNumber(e.target.value)}/>
                 <Link className={`btn btn-primary ${!catwayNumber ? "disabled" : ""}`} to={`/catways/${catwayNumber}/reservations`}>Valider</Link>
         </div>
+        <Link className="btn btn-secondary m-5" to={`/tableau_de_bord`}>Retour au tableau de bord</Link> 
     </main>
   );
 };

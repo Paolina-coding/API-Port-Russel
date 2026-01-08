@@ -205,6 +205,7 @@ const updateReservation = async (e) => {
 
             <div className="text-center mt-3">
                 <Link to="/reservations" className="btn btn-secondary">Retour à la sélection du catway</Link>
+                <Link className="btn btn-secondary m-5" to="/tableau_de_bord">Retour au tableau de bord</Link> 
             </div>
         </div>      
     </main>

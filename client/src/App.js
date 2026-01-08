@@ -6,7 +6,8 @@ import Reservations from "./components/pages/reservations";
 import GetCatway from "./components/getCatway.jsx";
 import ReservationsCatway from "./components/pages/reservationsCatway";
 import GetReservation from "./components/getReservation";
-// import Utilisateurs from "./components/pages/utilisateurs";
+import Utilisateurs from "./components/pages/utilisateurs";
+import GetUser from "./components/getUser.jsx";
 
 import './App.css';
 
@@ -22,14 +23,9 @@ function App() {
         <Route path="/reservations" element={<Reservations />} />
         <Route path="/catways/:id" element={<GetCatway />} />
         <Route path="catways/:catwayNumber/reservations/" element={<ReservationsCatway />} />
-        <Route path="/catways/:catwayNumber/reservations/:idReservation" element={<GetReservation />} />
-        {/*<Route path="/:catwayNumber/reservations/add" element={<AddReservation />} />
-        <Route path="/catways/:catwayNumber//List" element={<ReservationList />} />
-        <Route path="/catways/:catwayNumber/reservations/:idReservation/get" element={<GetReservation />} />
-        <Route path="/catways/:catwayNumber/reservations/:idReservation/update" element={<UpdateCatway />} />
-        <Route path="/:catwayNumber/reservations/:idReservation/delete" element={<DeleteCatway />} />
-        
-        <Route path="/utilisateurs" element={<Utilisateurs />} /> */}
+        <Route path="/catways/:catwayNumber/reservations/:idReservation" element={<GetReservation />} />        
+        <Route path="/users" element={<Utilisateurs />} /> 
+        <Route path="/users/:email" element={<GetUser />} />
       </Routes>
     </div>
   );
