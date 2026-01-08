@@ -5,9 +5,10 @@ const GetUser = () => {
     const { email } = useParams(); 
     const [user, setUser] = useState(null);
     const [error, setError] = useState("");
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
-        fetch(`/users/${email}`)
+        fetch(`/users/${email}`, { headers: { "Authorization": "Bearer " + token }})
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Utilisateur introuvable");

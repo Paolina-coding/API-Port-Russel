@@ -12,6 +12,7 @@ const Utilisateurs = () => {
     const [updateEmail, setUpdateEmail] = useState(""); 
     const [updateUsername, setUpdateUsername] = useState(""); 
     const [updatePassword, setUpdatePassword] = useState("");
+    const token = localStorage.getItem("token");
 
 //ajout d'un nouvel utilisateur
     const addUser = async (e) => {
@@ -30,7 +31,7 @@ const Utilisateurs = () => {
         try {
             const response = await fetch("/users/add", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
                 body: JSON.stringify(newUser)
             });
 
@@ -70,7 +71,7 @@ const updateUser = async (e) => {
 
     const response = await fetch(`/users/${updateEmail}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
         body: JSON.stringify(body)
     });
 
@@ -97,6 +98,7 @@ const updateUser = async (e) => {
         try {
             const response = await fetch(`/users/${deleteEmail}`, {
                 method: "DELETE",
+                headers: { "Authorization": "Bearer " + token }
             });
 
             if (response.ok) {

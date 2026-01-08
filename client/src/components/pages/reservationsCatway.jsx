@@ -16,6 +16,7 @@ const ReservationsCatway = () => {
     const [updateBoatName, setUpdateBoatName] = useState(undefined);
     const [updateStartDate, setUpdateStartDate] = useState(undefined);
     const [updateEndDate, setUpdateEndDate] = useState(undefined);
+    const token = localStorage.getItem("token");
 
 //ajout d'une nouvelle réservation
     const addReservation = async (e) => {
@@ -36,7 +37,10 @@ const ReservationsCatway = () => {
         try {
             const response = await fetch(`/catways/${catwayNumber}/reservations/add`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
                 body: JSON.stringify(newReservation)
             });
 
@@ -80,7 +84,10 @@ const updateReservation = async (e) => {
 
     const response = await fetch(`/catways/${catwayNumber}/reservations/${updateId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
         body: JSON.stringify(body)
     });
 
@@ -103,6 +110,7 @@ const updateReservation = async (e) => {
         try {
             const response = await fetch(`/catways/${catwayNumber}/reservations/${deleteId}`, {
                 method: "DELETE",
+                headers : {"Authorization": "Bearer " + token}
             });
 
             if (response.ok) {

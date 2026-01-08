@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 
 const UserList = ({refresh}) => {
     const [users, setUsers] = useState([]);
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
-        fetch("/users")
+        fetch("/users", { headers: { "Authorization": "Bearer " + token }})
         .then(res => res.json())
         .then(data => {console.log("DATA REÇUE :", data);
             setUsers(data);})

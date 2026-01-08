@@ -11,6 +11,7 @@ const Catways = () => {
     const [refresh, setRefresh] = useState(false);
     const [updateNumber, setUpdateNumber] = useState(""); 
     const [updateState, setUpdateState] = useState("");
+    const token = localStorage.getItem("token");
 
 //ajout d'un nouveau catway
     const addCatway = async (e) => {
@@ -29,7 +30,10 @@ const Catways = () => {
         try {
             const response = await fetch("/catways/add", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json" ,
+                    "Authorization": "Bearer " + token
+                },
                 body: JSON.stringify(newCatway)
             });
 
@@ -61,7 +65,10 @@ const updateCatway = async (e) => {
     try {
         const response = await fetch(`/catways/${updateNumber}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
             body: JSON.stringify({ catwayState: updateState })
         });
 
@@ -91,11 +98,12 @@ const updateCatway = async (e) => {
         try {
             const response = await fetch(`/catways/${deleteNumber}`, {
                 method: "DELETE",
+                headers:{"Authorization": "Bearer " + token}
             });
 
             if (response.ok) {
                 alert("Catway supprimé !");
-                setCatwayNumber("");
+                setDeleteNumber("");
                 setRefresh(prev => !prev); //refresh de la liste des catways
 
             } else {
@@ -122,7 +130,7 @@ const updateCatway = async (e) => {
             </div>
 
             {/*Modale*/}
-            <div className="modal fade" id="ModalList" tabindex="-1" aria-hidden="true"> 
+            <div className="modal fade" id="ModalList" tabIndex="-1" aria-hidden="true"> 
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content bg-dark text-white">
                         <div className="modal-header">

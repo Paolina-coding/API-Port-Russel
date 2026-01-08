@@ -5,9 +5,10 @@ const GetReservation = () => {
     const { catwayNumber, idReservation } = useParams();
     const [reservation, setReservation] = useState(null);
     const [error, setError] = useState("");
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
-        fetch(`/catways/${catwayNumber}/reservations/${idReservation}`)
+        fetch(`/catways/${catwayNumber}/reservations/${idReservation}`, {headers: { "Authorization": "Bearer " + token }})
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Réservation introuvable");

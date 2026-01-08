@@ -4,7 +4,11 @@ const CatwayList = ({refresh}) => {
     const [catways, setCatways] = useState([]);
 
     useEffect(() => {
-        fetch("/catways")
+        const token = localStorage.getItem("token");
+
+        fetch("/catways", {
+            headers: { "Authorization": "Bearer " + token }
+        })
         .then(res => res.json())
         .then(data => setCatways(data))
         .catch(err => console.error(err));

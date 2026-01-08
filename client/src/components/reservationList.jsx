@@ -4,9 +4,10 @@ import { useParams } from "react-router-dom";
 const ReservationList = ({refresh}) => {
     const { catwayNumber } = useParams();
     const [reservation, setReservation] = useState([]);
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
-        fetch(`/catways/${catwayNumber}/reservations`)
+        fetch(`/catways/${catwayNumber}/reservations`, {headers: { "Authorization": "Bearer " + token }})
         .then(res => res.json())
         .then(data => setReservation(data))
         .catch(err => console.error(err));

@@ -7,7 +7,11 @@ const GetCatway = () => {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        fetch(`/catways/${id}`)
+        const token = localStorage.getItem("token");
+
+        fetch(`/catways/${id}`, {
+            headers: { "Authorization": "Bearer " + token }
+        })
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Catway introuvable");
