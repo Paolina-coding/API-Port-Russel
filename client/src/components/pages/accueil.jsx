@@ -1,4 +1,38 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const Accueil = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+
+    const Authenticate = async(e) => {
+      e.preventDefault();
+      setError("");
+
+      const response = await fetch("/users/authenticate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({email, password})
+      });
+
+      const data = await response.json();
+
+      if(!response.ok) {
+        setError("Identifiants incorrects");
+        return;
+      }
+
+      if(data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
+      
+      navigate("/tableau_de_bord");
+
+    };
+
   return (
     <main className="container">
       <div className="text-center">
@@ -14,15 +48,16 @@ const Accueil = () => {
         <div>
           <h2>Connexion</h2>
           <div>
-            <form>
+            <form onSubmit={Authenticate}>
                 <div className="mb-3">
                     <label className="form-label">Adresse Email</label>
-                    <input type="email" className="form-control" id="emailConnection"/>
+                    <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Mot de passe</label>
-                    <input type="password" className="form-control" id="passwordConnection"/>
+                    <input type="password" className="form-control" id="passwordConnection"value={password} onChange={(e) => setPassword(e.target.value)}/>
                 </div>
+                {error && <p className="text-danger">{error}</p>}
                 <button type="submit" className="btn btn-primary">Se connecter</button>
             </form>            
           </div>
