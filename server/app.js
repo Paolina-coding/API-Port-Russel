@@ -1,11 +1,5 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 8080;
-
-/** Démarrage du serveur*/
-app.listen(port, () => {
-  console.log('Server app listening on port' + port);
-})
 
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
