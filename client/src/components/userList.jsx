@@ -7,8 +7,7 @@ const UserList = ({refresh}) => {
     useEffect(() => {
         fetch("/users", { headers: { "Authorization": "Bearer " + token }})
         .then(res => res.json())
-        .then(data => {console.log("DATA REÇUE :", data);
-            setUsers(data);})
+        .then(data => setUsers(data))
         .catch(err => console.error(err));
     }, [refresh]);
 

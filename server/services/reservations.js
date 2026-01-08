@@ -3,7 +3,7 @@ const Catway = require('../models/catway');
 
 /* Récupérer la liste des reservations d'un catway */
 exports.getList = async (req, res) => {
-    const catwayNumber = req.params.catwayNumber;
+    const catwayNumber = Number(req.params.catwayNumber);
 
     try {
         const catway = await Catway.findOne({ catwayNumber: catwayNumber });
