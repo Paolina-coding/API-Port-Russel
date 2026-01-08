@@ -21,14 +21,19 @@ exports.getList = async (req, res) => {
 /* Récuperer les détails d'une réservation avec son identifiant*/
 exports.getById = async (req, res) => {
     const idReservation = req.params.idReservation;
+    const catwayNumber = Number(req.params.catwayNumber);
 
     try{
         let reservation = await Reservation.findOne({_id : idReservation});
 
-        if (reservation) {
-            return res.status(200).json(reservation);
-        }
-        return res.status(404).json('reservation_not_found');
+        if (!reservation) {
+            return res.status(404).json("reservation_not_found"); 
+        } 
+        if (reservation.catwayNumber !== catwayNumber) {
+            return res.status(400).json("catway_mismatch"); 
+        } 
+        return res.status(200).json(reservation);
+
     } catch(error) {
         return res.status(500).json(error);
     }
@@ -36,7 +41,7 @@ exports.getById = async (req, res) => {
 
 /* Ajouter une reservation */
 exports.add = async (req, res) => {
-    const catwayNumber = req.params.catwayNumber;
+    const catwayNumber = Number(req.params.catwayNumber);
     const temp = ({
             catwayNumber: req.body.catwayNumber,
             clientName : req.body.clientName,
@@ -50,11 +55,11 @@ exports.add = async (req, res) => {
         if (!catway) {
             return res.status(404).json('catway_not_found');
         }
-        temp.catway = catwayNumber;
-        let reservation = await Reservation.create(temp);
+        const reservation = await Reservation.create(temp);
         return res.status(201).json(reservation);
 
     } catch (error) {
+        console.error(error);
         return res.status(500).json(error);
     }
 };
@@ -64,6 +69,8 @@ exports.add = async (req, res) => {
 /* Modifier une reservation */
 exports.update = async (req, res) => {
     const reservationId = req.params.idReservation;
+    const catwayNumber = Number(req.params.catwayNumber);
+
     const temp = ({
         clientName : req.body.clientName,
         boatName: req.body.boatName,
@@ -73,20 +80,23 @@ exports.update = async (req, res) => {
 
     try{
         let reservation = await Reservation.findOne({_id: reservationId});
-        if (reservation) {
-            Object.keys(temp).forEach((key) => {
-                if (!!temp[key]) {
-                    reservation[key] = temp[key];
-                }
-            });
-
-            await reservation.save();
-            return res.status(200).json('update_ok');
-        }
-        else {
+        if (!reservation) {
             return res.status(404).json('reservation_not_found');
         }
-    } catch (error) {
+        if(reservation.catwayNumber !== catwayNumber) { 
+            return res.status(400).json("catway_mismatch"); 
+        }
+        Object.keys(temp).forEach((key) => {
+            if (temp[key] !== undefined && temp[key] !== "") {
+                reservation[key] = temp[key]; 
+            }
+        });
+
+        await reservation.save();
+        return res.status(200).json('update_ok');
+    }
+    
+    catch (error) {
         return res.status(500).json(error);
     }
 }

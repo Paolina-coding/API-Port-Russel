@@ -99,6 +99,7 @@ exports.authenticate = async (req, res) => {
                     throw new Error(err);
                 }
                 if (response) {
+                    const userData = { ...user._doc };
                     delete user._doc.password;
 
                     const expireIn = 24 * 60 * 60;
@@ -111,7 +112,11 @@ exports.authenticate = async (req, res) => {
                     });
                     
                     res.header('Authorization', 'Bearer ' + token);
-                    return res.status(200).json('authenticate_suceed');
+                    return res.status(200).json({
+                        message: 'authenticate_succeed', 
+                        token: token, 
+                        user: userData}
+                    );
                 }
                 return res.status(403).json('wrong_credentials');
             });

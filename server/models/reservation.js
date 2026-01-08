@@ -3,10 +3,9 @@ const Schema = mongoose.Schema;
 
 const Reservation = new Schema({
     catwayNumber:{
-        type : String,
+        type : Number,
         trim : true,
         required : [true, 'Le numéro du catway est requis'],
-        unique : true
     },
     clientName: {
         type : String,
