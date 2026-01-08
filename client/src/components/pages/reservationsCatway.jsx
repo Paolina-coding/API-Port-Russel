@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useState } from "react";
 import ReservationList from '../reservationList';
+import { API_URL } from "../../config";
 
 /**
  * Page de gestion complète des réservations.
@@ -52,7 +53,7 @@ const ReservationsCatway = () => {
         };
 
         try {
-            const response = await fetch(`/catways/${catwayNumber}/reservations/add`, {
+            const response = await fetch(`${API_URL}/catways/${catwayNumber}/reservations/add`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -99,7 +100,7 @@ const updateReservation = async (e) => {
         return;
     }
 
-    const response = await fetch(`/catways/${catwayNumber}/reservations/${updateId}`, {
+    const response = await fetch(`${API_URL}/catways/${catwayNumber}/reservations/${updateId}`, {
         method: "PUT",
         headers: { 
             "Content-Type": "application/json",
@@ -125,7 +126,7 @@ const updateReservation = async (e) => {
         }
 
         try {
-            const response = await fetch(`/catways/${catwayNumber}/reservations/${deleteId}`, {
+            const response = await fetch(`${API_URL}/catways/${catwayNumber}/reservations/${deleteId}`, {
                 method: "DELETE",
                 headers : {"Authorization": "Bearer " + token}
             });

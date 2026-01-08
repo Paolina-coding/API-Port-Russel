@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import UserList from "../userList";
+import { API_URL } from "../../config";
 
 /**
  * Page de gestion complète des utilisateurs.
@@ -47,7 +48,7 @@ const Utilisateurs = () => {
         };
 
         try {
-            const response = await fetch("/users/add", {
+            const response = await fetch(`${API_URL}/users/add`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
                 body: JSON.stringify(newUser)
@@ -87,7 +88,7 @@ const updateUser = async (e) => {
         return;
     }
 
-    const response = await fetch(`/users/${updateEmail}`, {
+    const response = await fetch(`${API_URL}/users/${updateEmail}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
         body: JSON.stringify(body)
@@ -114,7 +115,7 @@ const updateUser = async (e) => {
         }
 
         try {
-            const response = await fetch(`/users/${deleteEmail}`, {
+            const response = await fetch(`${API_URL}/users/${deleteEmail}`, {
                 method: "DELETE",
                 headers: { "Authorization": "Bearer " + token }
             });
@@ -216,7 +217,7 @@ const updateUser = async (e) => {
                     <button type="submit" className="btn btn-primary">Ajouter</button>
                 </div>
             </form> 
-            <Link className="btn btn-secondary m-5" to={`/tableau_de_bord`}>Retour au tableau de bord</Link> 
+            <Link className="btn btn-secondary m-5" to="/tableau_de_bord">Retour au tableau de bord</Link> 
         </div>      
     </main>
   );

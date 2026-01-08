@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../config";
 
 /**
  * Page d’accueil de l’application avec le formulaire de connexion.
@@ -23,7 +24,7 @@ const Accueil = () => {
       e.preventDefault();
       setError("");
 
-      const response = await fetch("/users/authenticate", {
+      const response = await fetch(`${API_URL}/users/authenticate`, {
         method: "POST",
         headers: { "Content-Type": "application/json"},
         body: JSON.stringify({email, password})
@@ -77,7 +78,7 @@ const Accueil = () => {
         <hr />
         <div className="accordion-item">
             <h2>Documentation de l'API</h2>
-            <a href="http://localhost:8080/documentation" className="btn btn-secondary" target="_blank">Cliquer pour afficher</a>
+            <a href="https://api-port-russel-4c7k.onrender.com/documentation" className="btn btn-secondary" target="_blank">Cliquer pour afficher</a>
         </div>
       </div>      
     </main>

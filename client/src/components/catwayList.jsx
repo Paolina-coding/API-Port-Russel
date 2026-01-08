@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../config";
 
 /**
  * Affiche la liste des catways.
@@ -20,7 +21,7 @@ const CatwayList = ({refresh}) => {
     useEffect(() => {
         const token = localStorage.getItem("token");
 
-        fetch("/catways", {
+        fetch(`${API_URL}/catways`, {
             headers: { "Authorization": "Bearer " + token }
         })
         .then(res => res.json())

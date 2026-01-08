@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../config";
 
 /**
  * Affiche la liste des utilisateurs.
@@ -19,7 +20,7 @@ const UserList = ({refresh}) => {
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        fetch("/users", { headers: { "Authorization": "Bearer " + token }})
+        fetch(`${API_URL}/users`, { headers: { "Authorization": "Bearer " + token }})
         .then(res => res.json())
         .then(data => setUsers(data))
         .catch(err => console.error(err));
