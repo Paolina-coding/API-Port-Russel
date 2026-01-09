@@ -24,7 +24,7 @@ const TableauDeBord = () => {
   useEffect(() => { 
     const token = localStorage.getItem("token"); 
     
-    fetch(`${API_URL}/reservations/current`, { headers: { "Authorization": "Bearer " + token } }) 
+    fetch(`${API_URL}/api/reservations/current`, { headers: { "Authorization": "Bearer " + token } }) 
     .then(res => res.json()) 
     .then(data => {setCurrentReservations(data)}) 
     .catch(err => console.error(err)); 
